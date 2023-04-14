@@ -57,7 +57,7 @@ public class PlayerMovement : MonoBehaviour, IPlayerController
     void Awake() => Invoke(nameof(Activate), 0.5f);
     void Activate() => _active = true;
     private void Start() {
-        wayport = new Vector3(-9,- .8f, 0);
+        wayport = new Vector3(-27.67f, -2.46f, 0f);
 
 
     }
@@ -176,10 +176,7 @@ public class PlayerMovement : MonoBehaviour, IPlayerController
 
                             transform.position = wayport + new Vector3(0,1.5f, 0) ;
                             hits = hits + 1;
-                            if (hits >= 5)
-                            {
-                                SceneManager.LoadScene("LOSE");
-                            }
+                            
                         }
 
                         if (hit.transform.CompareTag("Goal"))
