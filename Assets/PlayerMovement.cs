@@ -181,7 +181,7 @@ public class PlayerMovement : MonoBehaviour, IPlayerController
 
                         if (hit.transform.CompareTag("Goal"))
                         {
-                            SceneManager.LoadScene("you win");
+                            SceneManager.LoadScene("win");
                         }
 
                         if (hit.transform.CompareTag("coin"))
