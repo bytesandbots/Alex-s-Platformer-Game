@@ -44,6 +44,8 @@ public class PlayerMovement : MonoBehaviour, IPlayerController
     public bool LandingThisFrame { get; private set; }
     public Vector3 RawMovement { get; private set; }
     public bool Grounded => _colDown;
+    public int extraJumps = 2;
+    private int orignJumps;
 
     private Vector3 _lastPosition;
     private float _currentHorizontalSpeed, _currentVerticalSpeed;
@@ -58,7 +60,7 @@ public class PlayerMovement : MonoBehaviour, IPlayerController
     void Activate() => _active = true;
     private void Start() {
         wayport = new Vector3(-27.67f, -2.46f, 0f);
-
+        orignJumps = extraJumps;
 
     }
     private void Update()
@@ -143,8 +145,12 @@ public class PlayerMovement : MonoBehaviour, IPlayerController
         {
             _coyoteUsable = true; // Only trigger when first touching
             LandingThisFrame = true;
+            extraJumps = 0;
         }
-
+        if (groundedCheck)
+        {
+            extraJumps = orignJumps;
+        }
         _colDown = groundedCheck;
 
         // The rest
@@ -189,8 +195,6 @@ public class PlayerMovement : MonoBehaviour, IPlayerController
                             Destroy(hit.transform.gameObject);
                         }
 
-                        Debug.Log(hit.transform.tag);
-                        Debug.Log(hit.transform.name);
                     }
 
                 }
@@ -372,18 +376,30 @@ public class PlayerMovement : MonoBehaviour, IPlayerController
 
     private void CalculateJump()
     {
-        // Jump if: grounded or within coyote threshold || sufficient jump buffer
-        if (Inputs.JumpDown && CanUseCoyote || HasBufferedJump)
+ 
+        
+        if (Inputs.JumpDown &&  extraJumps > 0) {
+            _currentVerticalSpeed = _jumpHeight;
+            _endedJumpEarly = false;
+            _coyoteUsable = false;
+            _timeLeftGrounded = float.MinValue;
+            JumpingThisFrame = true;
+            extraJumps--;
+        }
+        else if (((Inputs.JumpDown && CanUseCoyote) && extraJumps > 0) || HasBufferedJump)
         {
             _currentVerticalSpeed = _jumpHeight;
             _endedJumpEarly = false;
             _coyoteUsable = false;
             _timeLeftGrounded = float.MinValue;
             JumpingThisFrame = true;
+            extraJumps--;
+
         }
         else
         {
             JumpingThisFrame = false;
+            
         }
 
         // End the jump early if button released
